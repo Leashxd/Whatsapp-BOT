@@ -30,7 +30,7 @@ font = ("Arial",15)
 #Obtain the user
 sg.set_options(font=font)
 pcuser=os.getlogin()
-chromeuser=r"user-data-dir=C:\\Users\\"+str(pcuser)+r"\\AppData\Local\Google\Chrome\User Data"
+
 def modify_number(phone_no):
     #Quitarmos espacios/guiones/parentesis
     phone_no = phone_no.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
@@ -96,7 +96,9 @@ NumIngresado_layout = [[sg.Listbox(values=list1, size=(30,6), enable_events=True
                          sg.Button("Añadir", enable_events=True, key="-BUTTON-")]]
 
 #Layout de la ventana
-layout = [[sg.Text("Demo")],      
+layout = [[sg.Text("Demo")], 
+                [sg.Text('Seleccione su sistema operativo', size=(40,1))],
+                [sg.Radio('Windows',"OS", default=True, key="-WINDOWS-"),sg.Radio('MacOS',"OS", default=False, key="-MACOS-")],     
                 [sg.Text('Ingresar Numero:', size=(40,1))],
                 [sg.Text('En formato +56 9 1234 5678', size=(40,1))],
                 [sg.Input(size=30, key='c')],
@@ -107,13 +109,17 @@ layout = [[sg.Text("Demo")],
                 [sg.Button(button_text='Enviar Mensajes', button_type=7)],
                 [sg.Cancel("Exit")]]  
 
-window = sg.Window("Whatsapp BOT", layout=layout, background_color="#272533", size=(850, 700))
+window = sg.Window("Whatsapp BOT", layout=layout, background_color="#272533", size=(850, 760))
 
 while True:
     event, values = window.read()
     if event == "Exit" or event == sg.WIN_CLOSED:
         break
-
+    #OS
+    if values["-WINDOWS-"] == True: 
+        chromeuser=r"user-data-dir=C:\\Users\\"+str(pcuser)+r"\\AppData\Local\Google\Chrome\User Data"
+    if values["-MACOS-"] == True:
+        chromeuser= r"user-data-dir=chrome-user"
 
     if event=="Previsualizar":
         msj=values['c2']
@@ -153,8 +159,8 @@ while True:
             if (validate_number(phone_no)):
 
                 # Loads browser
-                print("buscando navegador")
-                # +569 93980707
+                
+                
                 driver = set_browser(browser)
                 for i in range(1):
                     #Mensaje!
