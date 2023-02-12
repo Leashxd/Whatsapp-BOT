@@ -111,24 +111,22 @@ layout = [[sg.Text("Demo")],
                 [sg.Button(button_text='Enviar Mensajes', button_type=7)],
                 [sg.Cancel("Exit")]]  
 
-window = sg.Window("Whatsapp BOT", layout=layout, background_color="#272533", size=(850, 760))
+window = sg.Window("Whatsapp BOT", layout=layout, background_color="#272533", size=(850, 760),resizable=True)
 
-def crear_csv(numeros):
+def crear_csv(numeros):#create a csv based on phone numbers
     #we request the list to create a csv from it   
     df=pd.DataFrame(numeros, columns=["numeros"])
     df["Estado"]=0
     guardar_csv(df)
-
-def actualizar_csv(index,estado):
+def actualizar_csv(index,estado): #Update the state of numbers
     fecha=str(date.today())
     df=pd.read_csv("Enviados"+fecha+".csv")
     if estado == "Positivo":
         df.at[index,"Estado"]="Enviado"
     if estado == "Negativo":
         df.at[index,"Estado"] = "No enviado"
-    guardar_csv(df)
-    
-def guardar_csv(df):
+    guardar_csv(df)    
+def guardar_csv(df):#saves the csv based on date
     fecha=str(date.today())
     df.to_csv("Enviados"+fecha+".csv",index=False)
 
