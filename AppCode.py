@@ -29,9 +29,7 @@ numeros = []
 browser = "Chrome"
 msj = f''
 font = ("Arial",15)
-#Obtain the user
-sg.set_options(font=font)
-pcuser=os.getlogin()
+
 
 def modify_number(phone_no):
     #Quitarmos espacios/guiones/parentesis
@@ -136,6 +134,9 @@ while True: #ACTION BUTTONS
         break
     #OS
     if values["-WINDOWS-"] == True: 
+        #Obtain the user
+        sg.set_options(font=font)
+        pcuser=os.getlogin()
         argument=r"--user-data-dir=C:\\Users\\"+pcuser+r"\\AppData\Local\Google\Chrome\User Data"
         chromeuser=r"user-data-dir=C:\\Users\\"+str(pcuser)+r"\\AppData\Local\Google\Chrome\User Data"
     if values["-MACOS-"] == True:
