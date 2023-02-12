@@ -15,6 +15,8 @@ from webdriver_manager.opera import OperaDriverManager
 from webdriver_manager import *
 import PySimpleGUI as sg
 import os
+import pandas as pd
+from datetime import date
 #import undetected_chromedriver as uc
 
 #Por hacer!
@@ -23,7 +25,7 @@ import os
 
 #Variables
 list1 = []
-numeros = ["+569 93980707"]
+numeros = []
 browser = "Chrome"
 msj = f''
 font = ("Arial",15)
@@ -54,7 +56,7 @@ def set_browser(browser):
         #Cancelamos el login por mensaje
         opciones = Options()
         
-        opciones.add_argument(r"--user-data-dir=C:\\Users\\"+pcuser+r"\\AppData\Local\Google\Chrome\User Data")
+        opciones.add_argument(argument)
         opciones.add_experimental_option("excludeSwitches", ["enable-automation"])
         opciones.add_experimental_option('useAutomationExtension', False)
 
@@ -111,17 +113,38 @@ layout = [[sg.Text("Demo")],
 
 window = sg.Window("Whatsapp BOT", layout=layout, background_color="#272533", size=(850, 760))
 
-while True:
+def crear_csv(numeros):
+    #we request the list to create a csv from it   
+    df=pd.DataFrame(numeros, columns=["numeros"])
+    df["Estado"]=0
+    guardar_csv(df)
+
+def actualizar_csv(index,estado):
+    fecha=str(date.today())
+    df=pd.read_csv("Enviados"+fecha+".csv")
+    if estado == "Positivo":
+        df.at[index,"Estado"]="Enviado"
+    if estado == "Negativo":
+        df.at[index,"Estado"] = "No enviado"
+    guardar_csv(df)
+    
+def guardar_csv(df):
+    fecha=str(date.today())
+    df.to_csv("Enviados"+fecha+".csv",index=False)
+
+while True: #ACTION BUTTONS
     event, values = window.read()
     if event == "Exit" or event == sg.WIN_CLOSED:
         break
     #OS
     if values["-WINDOWS-"] == True: 
+        argument=r"--user-data-dir=C:\\Users\\"+pcuser+r"\\AppData\Local\Google\Chrome\User Data"
         chromeuser=r"user-data-dir=C:\\Users\\"+str(pcuser)+r"\\AppData\Local\Google\Chrome\User Data"
     if values["-MACOS-"] == True:
-        chromeuser= r"user-data-dir=chrome-user"
-
-    if event=="Previsualizar":
+        chromeuser= r"user-data-dir=chrome-data"
+        argument = r"--user-data-dir=chrome-data"
+    
+    if event=="Previsualizar":#PREVIEW
         msj=values['c2']
         sg.Popup("Previsualización del mensaje: \n",msj)
 
@@ -152,6 +175,7 @@ while True:
 
     if event == "Enviar Mensajes":
         msj=values['c2']
+        crear_csv(numeros)
         for contactos in range(len(numeros)):
             phone_no = numeros[contactos]
             phone_no = modify_number(phone_no)
@@ -159,40 +183,47 @@ while True:
             if (validate_number(phone_no)):
 
                 # Loads browser
-                
-                
                 driver = set_browser(browser)
                 for i in range(1):
-                    #Mensaje!
-                    message = msj
-                    # Goes to site
-                    #print("Abrir url")
-                    site = f"https://web.whatsapp.com/send?phone={phone_no}&text={quote(message)}"
+                    try: 
+                        #Mensaje!
+                        message = msj
+                        # Goes to site
+                        #print("Abrir url")
+                        site = f"https://web.whatsapp.com/send?phone={phone_no}&text={quote(message)}"
 
-                    driver.get(site)
-                    time.sleep(6) 
-                    
-                    #print("url abierta")
-                    
-                    # Uses XPATH to find a send button
-                    element = lambda d : d.find_elements(by=By.XPATH, value="//div//button/span[@data-icon='send']")
-                    
-                    # Waits until send is found (in case of login)
-                    loaded = WebDriverWait(driver, 2200).until(method=element, message="User never signed in")
-                    
-                    # Loads a send button
-                    driver.implicitly_wait(40)
-                    send = element(driver)[0]
-                    
-                    # Clicks the send button
-                    send.click()
-                    #print("Mensaje Enviado")
-                    
-                    # Sleeps for 5 secs to allow time for text to send before closing window
-                    time.sleep(6) 
-                    # Closes window
-                    #print("Cerramos La sesion")
-                    driver.close()
+                        driver.get(site)
+                        time.sleep(6) 
+                        
+                        #print("url abierta")
+                        
+                        # Uses XPATH to find a send button
+                        element = lambda d : d.find_elements(by=By.XPATH, value="//div//button/span[@data-icon='send']")
+                        
+                        # Waits until send is found (in case of login)
+                        loaded = WebDriverWait(driver, 2200).until(method=element, message="User never signed in")
+                        
+                        
+                        # Loads a send button
+                        driver.implicitly_wait(40)
+                        send = element(driver)[0]
+                        
+                        # Clicks the send button
+                        send.click()
+                        actualizar_csv(contactos,"Positivo")
+                        #print("Mensaje Enviado")
+                        
+                        # Sleeps for 5 secs to allow time for text to send before closing window
+                        time.sleep(6) 
+                        # Closes window
+                        #print("Cerramos La sesion")
+                        driver.close()
+                    except:
+                        actualizar_csv(contactos,"Negativo")
+                        time.sleep(6) 
+                        driver.close()
+
+
         
 
 
