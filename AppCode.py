@@ -147,8 +147,17 @@ while True: #ACTION BUTTONS
         sg.Popup("Previsualización del mensaje: \n",msj,title="Mensaje")
 
     if event == 'Ingresar': #Ingresamos el numero ingresado a la lista
-        list1.append(values['c'])
-        window['-LIST-'].update((list1))
+        try:
+            if values['c'] != "":
+                print(values['c'])
+                list1.append(values['c'])
+                window['-LIST-'].update((list1))
+            else:
+                sg.Popup("Ingresa en un formato valido",title="Error")
+        except:
+            sg.Popup("Ingresa en un formato valido",title="Error")
+        
+        
         #print(list1)
 
     if event == "-BUTTON-": #Pasar de ingresador a enviar
