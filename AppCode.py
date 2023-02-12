@@ -144,7 +144,7 @@ while True: #ACTION BUTTONS
     
     if event=="Previsualizar":#PREVIEW
         msj=values['c2']
-        sg.Popup("Previsualización del mensaje: \n",msj)
+        sg.Popup("Previsualización del mensaje: \n",msj,title="Mensaje")
 
     if event == 'Ingresar': #Ingresamos el numero ingresado a la lista
         list1.append(values['c'])
@@ -152,23 +152,33 @@ while True: #ACTION BUTTONS
         #print(list1)
 
     if event == "-BUTTON-": #Pasar de ingresador a enviar
-        INDEX = int(''.join(map(str, window["-LIST-"].get_indexes())))
-        numeros.append(list1.pop(INDEX))
-        window["-numeros-"].update(numeros)
-        window["-LIST-"].update(list1)
+        try:
+            INDEX = int(''.join(map(str, window["-LIST-"].get_indexes())))
+            numeros.append(list1.pop(INDEX))
+            window["-numeros-"].update(numeros)
+            window["-LIST-"].update(list1)
+        except:
+            sg.Popup("Selecciona un numero antes de añadir",title="Error")
+
     
     if event == "ELIMINAR NUMERO": #Eliminar numeros de la lista de ingresados
-        INDEX = int(''.join(map(str, window["-LIST-"].get_indexes())))
-        list1.pop(INDEX)
-        window["-numeros-"].update(numeros)
-        window["-LIST-"].update(list1)
+        try:
+            INDEX = int(''.join(map(str, window["-LIST-"].get_indexes())))
+            list1.pop(INDEX)
+            window["-numeros-"].update(numeros)
+            window["-LIST-"].update(list1)
+        except:
+            continue
 
     if event == "-BUTTON2-":#Pasamos de enviar a ingresados
-        INDEX = int(''.join(map(str, window["-numeros-"].get_indexes())))
-        list1.append(numeros.pop(INDEX))
-        window["-numeros-"].update(numeros)
-        window["-LIST-"].update(list1)
-        #print(list1)
+        try:
+            INDEX = int(''.join(map(str, window["-numeros-"].get_indexes())))
+            list1.append(numeros.pop(INDEX))
+            window["-numeros-"].update(numeros)
+            window["-LIST-"].update(list1)
+            #print(list1)
+        except:
+            sg.Popup("Selecciona un numero antes de Quitar",title="Error")
 
 
     if event == "Enviar Mensajes":
