@@ -219,7 +219,7 @@ while True: #ACTION BUTTONS
                         element = lambda d : d.find_elements(by=By.XPATH, value="//div//button/span[@data-icon='send']")
                         
                         # Waits until send is found (in case of login)
-                        loaded = WebDriverWait(driver, 2200).until(method=element, message="User never signed in")
+                        loaded = WebDriverWait(driver, 180).until(method=element, message="User never signed in")
                         
                         
                         # Loads a send button
